@@ -8,7 +8,6 @@ import java.util.ArrayList;
 
 public class ParagraphComponent extends Component {
 
-    //TODO: Padding
 
     //Variables
     public static final int JUSTIFICATION_LEFT = 0;
@@ -100,13 +99,13 @@ public class ParagraphComponent extends Component {
     }
 
     public int getPaddedWidth() {
-        int width = super.getWidth();
+        int width = super.getTrueWidth();
         int paddedWidth = (int) ((width-screenSize.width*((float) paddingRight/1000))-screenSize.width*((float) paddingLeft/1000));
         if (paddedWidth > 34) return paddedWidth; else throw new RuntimeException("Width Of Component Is Zero Or Less.");
     }
 
     public int getPaddedHeight() {
-        int height = super.getHeight();
+        int height = super.getTrueHeight();
         int paddedHeight = (int) ((height-screenSize.width*((float) paddingDown/1000))- screenSize.width*((float) paddingUp/1000));
         if (paddedHeight > 34) return paddedHeight; else throw new RuntimeException("Height Of Component Is Zero Or Less.");
     }

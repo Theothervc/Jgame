@@ -11,7 +11,7 @@ public class TitleScene implements Scene, KeyListener {
 
 
 
-    public ParagraphComponent text = new ParagraphComponent(0,0,500,300,"$WIf You Leave Now, $RASGORE$W Will Take Your $YSoul",new Font("Z003",Font.PLAIN,28));
+    public ParagraphComponent text = new ParagraphComponent(0,0,500,300,"Lorem Ipsum",new Font("Z003",Font.PLAIN,28));
 
     @Override
     public void pause() {
@@ -42,6 +42,7 @@ public class TitleScene implements Scene, KeyListener {
 
     @Override
     public void keyPressed(KeyEvent keyEvent) {
+        text.setWidth(text.getWidth() + 50);
     }
 
     @Override

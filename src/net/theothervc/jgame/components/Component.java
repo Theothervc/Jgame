@@ -56,9 +56,13 @@ public abstract class Component {
 
     private int getRawHeight() {return (int) (screenSize.height*(height/1000));}
 
-    public int getWidth() {return size.fitToDimension(new Dimension(getRawWidth(),getRawHeight())).width;}
+    public int getTrueWidth() {return size.fitToDimension(new Dimension(getRawWidth(),getRawHeight())).width;}
 
-    public int getHeight() {return size.fitToDimension(new Dimension(getRawWidth(),getRawHeight())).height;}
+    public int getTrueHeight() {return size.fitToDimension(new Dimension(getRawWidth(),getRawHeight())).height;}
+
+    public int getWidth() {return (int) width;}
+
+    public int getHeight() {return (int) height;}
 
     public Dimension getSize() {return size.fitToDimension(new Dimension(getRawWidth(),getRawHeight()));}
 

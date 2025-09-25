@@ -1,7 +1,6 @@
 package net.theothervc.jgame.game;
 
 
-import org.cef.OS;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,7 +14,7 @@ public class GamePanel extends GamePanelClass {
         canvas = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
-                if (OS.isLinux()) Toolkit.getDefaultToolkit().sync();
+                if (System.getProperty("os.name").toLowerCase().contains("linux")) Toolkit.getDefaultToolkit().sync();
                 super.paintComponent(g);
                 calculateBackground(g);
                 parent.loop.currentScene.draw(g,canvas.getSize());

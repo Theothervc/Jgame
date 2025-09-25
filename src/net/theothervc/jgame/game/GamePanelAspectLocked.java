@@ -1,7 +1,6 @@
 package net.theothervc.jgame.game;
 
 import net.theothervc.jgame.util.AspectRatio;
-import org.cef.OS;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,7 +16,8 @@ public class GamePanelAspectLocked extends GamePanelClass {
 
             @Override
             protected void paintComponent(Graphics g) {
-                if (OS.isLinux()) Toolkit.getDefaultToolkit().sync();
+                if (System.getProperty("os.name").toLowerCase().contains("linux")) Toolkit.getDefaultToolkit().sync();
+
                 super.paintComponent(g);
                 calculateBackground(g);
                 parent.loop.currentScene.draw(g,canvas.getSize());

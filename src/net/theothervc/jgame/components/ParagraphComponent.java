@@ -13,7 +13,10 @@ public class ParagraphComponent extends Component {
     public static final int JUSTIFICATION_LEFT = 0;
     public static final int JUSTIFICATION_RIGHT = 1;
     public static final int JUSTIFICATION_CENTER = 2;
-    public int Justification = 0;
+    public static final int JUSTIFICATION_UP = 0;
+    public static final int JUSTIFICATION_DOWN = 1;
+    public int justification_Horizontal = 0;
+    public int justification_Vertical = 0;
     public int paddingLeft = 0;
     public int paddingRight = 0;
     public int paddingUp = 0;
@@ -46,14 +49,14 @@ public class ParagraphComponent extends Component {
 
     //More Self Explanatory Constructors.
 
-    public ParagraphComponent(int x, int y, int w, int h, String text, Font font, int justification) {
+    public ParagraphComponent(int x, int y, int w, int h, String text, Font font, int justificationH) {
         this(x,y,w,h,text,font);
-        Justification = justification;
+        justification_Horizontal = justificationH;
     }
 
-    public ParagraphComponent(int x, int y, int w, int h, String text, Font font, checkMethodInterface func, int justification) {
+    public ParagraphComponent(int x, int y, int w, int h, String text, Font font, checkMethodInterface func, int justificationH) {
         this(x,y,w,h,text,font,func);
-        Justification = justification;
+        justification_Horizontal = justificationH;
     }
 
     //By Setting The Font Ratio To Null And Font Size To Zero We Queue Them To Be Recalculated At The Next Draw, Which Should Be In The Same Frame.
@@ -101,6 +104,7 @@ public class ParagraphComponent extends Component {
     public int getPaddedWidth() {
         int width = super.getTrueWidth();
         int paddedWidth = (int) ((width-screenSize.width*((float) paddingRight/1000))-screenSize.width*((float) paddingLeft/1000));
+        //I have no fucking clue why this works but it does.
         if (paddedWidth > 34) return paddedWidth; else throw new RuntimeException("Width Of Component Is Zero Or Less.");
     }
 
@@ -193,7 +197,7 @@ public class ParagraphComponent extends Component {
 
 
     //Interlude, Text Coloring Function
-    public void write(Graphics g, FontMetrics metrics,ArrayList<String> lines,ArrayList<Integer> lineXs) {
+    public void write(Graphics g, FontMetrics metrics,ArrayList<String> lines,ArrayList<Integer> lineXs,int startY) {
         //Take The List Of Lines And Recombine Them With $N - The Command Code For Line Break.
         //We Also Add An Extra Character To The Start And Line Break To The End Or The Last Line And First Char Wouldn't Render
         String attachedLines = " "+String.join("$N",lines)+"$N";
@@ -207,7 +211,7 @@ public class ParagraphComponent extends Component {
             //Draw The Text From The Last Command To This One, Minus The Command Code.
             //We Also Replace Any \ In \$CODE To Nothing To Delete Them.
             //Increment The Line's X So We Keep The Cursor At The End.
-            g.drawString(codes[i-1].substring(1).replaceAll("\\\\(?=\\$.)",""),lineX,getPaddedY()+metrics.getHeight()*lineNum);
+            g.drawString(codes[i-1].substring(1).replaceAll("\\\\(?=\\$.)",""),lineX,startY+metrics.getHeight()*lineNum);
             lineX += metrics.stringWidth(codes[i-1].substring(1));
             switch (code) {
                 case 'N':
@@ -322,18 +326,25 @@ public class ParagraphComponent extends Component {
         oldSize = getPaddedSize();
         fontSize = g.getFont().getSize();
 
-        //Create The List Of Xs For Justification
+        //Create The List Of Xs For Horizontal Justification
         ArrayList<Integer> lineXs = new ArrayList<>();
             for (String line : lines) {
                 //If 2 Then Math For Center, If One Then Math For Right, Else Left, Or Set To X
-                if (Justification == 2) lineXs.add(getPaddedX() -(metrics.stringWidth(line.replaceAll("(?<!\\\\)\\$.|\\\\(?=\\$.)",""))/2)+(getPaddedWidth()/2));
-                else if (Justification == 1) lineXs.add((getPaddedX() - metrics.stringWidth(line.replaceAll("(?<!\\\\)\\$.|\\\\(?=\\$.)",""))+getPaddedWidth())-getPaddedWidth()/20);
+                if (justification_Horizontal == 2) lineXs.add(getPaddedX() -(metrics.stringWidth(line.replaceAll("(?<!\\\\)\\$.|\\\\(?=\\$.)",""))/2)+(getPaddedWidth()/2));
+                else if (justification_Horizontal == 1) lineXs.add((getPaddedX() - metrics.stringWidth(line.replaceAll("(?<!\\\\)\\$.|\\\\(?=\\$.)",""))+getPaddedWidth())-getPaddedWidth()/20);
                 else lineXs.add(getPaddedX());
         }
             //The Value Of This Doesn't Matter But It's Needed To Prevent ArrayOutBoundsError.
         lineXs.add(0);
-        //Draw The Text With Respect To Text Commands.
 
-        write(g,metrics,lines,lineXs);
+            //Create Variables And Do Math For Vertical Justification.
+        int starty;
+        if (justification_Vertical == 2) starty = (getPaddedY()+getPaddedHeight()/2)-((metrics.getHeight()*( lines.size()/2)));
+        else if (justification_Vertical == 1) starty = (getPaddedY()+getPaddedHeight())-metrics.getHeight()*lines.size();
+        else starty = getPaddedY();
+
+        //Draw The Text With Respect To Text Commands.
+        write(g,metrics,lines,lineXs,starty);
+
     }
 }
